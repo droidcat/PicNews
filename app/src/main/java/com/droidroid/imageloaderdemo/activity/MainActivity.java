@@ -149,7 +149,7 @@ public class MainActivity extends BaseActivity {
 
 
                     }
-                }, 2000);
+                }, 1000);
             }
         });
 
@@ -173,7 +173,7 @@ public class MainActivity extends BaseActivity {
                         }
 
                     }
-                }, 2000);
+                }, 20);
             }
         });
 
@@ -244,15 +244,17 @@ public class MainActivity extends BaseActivity {
                 // 列表首项或当前系统的时间，用于比较
                 Date date;
 
-                // 将时间字符串格式化为date类
+                // 将时间字符串格式化为Date类
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 if (result != null && result.size() > 0) {
+                    // 列表首项的时间
                     updateTime = result.get(0).getUpdateTime();
                     date = format.parse(updateTime, new ParsePosition(0));
                 } else {
-                    Date current = new Date(System.currentTimeMillis());
-                    String currentStr = format.format(current);
-                    date = format.parse(currentStr, new ParsePosition(0));
+                    // 时间设置为一小时前
+                    Date oneHourAgo = new Date(System.currentTimeMillis() - 1000 * 60 * 60);
+                    String oneHourAgoStr = format.format(oneHourAgo);
+                    date = format.parse(oneHourAgoStr, new ParsePosition(0));
                 }
 
                 // 更新的list，可能为空
@@ -292,7 +294,7 @@ public class MainActivity extends BaseActivity {
                 String urlSingle;
                 String jsonSingle;
 
-                // 列表项最后一项的索引
+                // 列表最后一项的索引
                 int lastIndex = result.size() - 1;
 
                 // 最后一项的更新时间
@@ -305,7 +307,7 @@ public class MainActivity extends BaseActivity {
                 // 更新的list，可能为空
                 ArrayList<ItemNews> lodedList = new ArrayList<>();
 
-                while (lodedList.size() < 15) {
+                while (lodedList.size() < 5) {
 
                     urlSingle = url0.substring(0, url0.length()) + (lastIndex + 2);
                     jsonSingle = NetworkUtil.sendRequest(urlSingle);
