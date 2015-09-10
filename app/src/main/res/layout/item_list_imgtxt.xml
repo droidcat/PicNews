@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <ImageView
-        android:id="@+id/list_item_image"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_margin="3dp"
+        android:id="@+id/image_imageview_list"
+        android:layout_width="@dimen/image_imageview_width_list"
+        android:layout_height="@dimen/image_imageview_height_list"
+        android:layout_margin="@dimen/image_imageview_margin_list"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"/>
     <FrameLayout
@@ -17,25 +17,25 @@
         android:layout_height="match_parent"
         >
     <com.droidroid.imageloaderdemo.view.CYTextView
-        android:id="@+id/list_item_title"
+        android:id="@+id/title_textview_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left|top"
 
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="2dp"
-        cy:mytextSize="17sp"
-        cy:lineSpacingExtra="1sp"
+        android:layout_marginLeft="@dimen/title_textview_marginleft_list"
+        android:layout_marginRight="@dimen/title_textview_marginright_list"
+        android:layout_marginTop="@dimen/title_textview_margintop_list"
+        cy:mytextSize="@dimen/title_textview_textsize_list"
+        cy:lineSpacingExtra="@dimen/title_textview_linespace_list"
         cy:mytextColor="@color/list_item_title"/>
     <TextView
-        android:id="@+id/list_item_updatetime"
+        android:id="@+id/time_textview_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:text="10sp"
+        android:layout_marginRight="@dimen/time_textview_marginright_list"
+        android:textSize="@dimen/time_textview_textsize_list"
         android:layout_gravity="right|bottom"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="@dimen/time_textview_marginbottom_list"
         />
     </FrameLayout>
 </LinearLayout>
