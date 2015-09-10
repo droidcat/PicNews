@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cy="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/list_item_image"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_margin="3dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"/>
+    <FrameLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+    <com.droidroid.imageloaderdemo.view.CYTextView
+        android:id="@+id/list_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
+
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="2dp"
+        cy:mytextSize="17sp"
+        cy:lineSpacingExtra="1sp"
+        cy:mytextColor="@color/list_item_title"/>
+    <TextView
+        android:id="@+id/list_item_updatetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:text="10sp"
+        android:layout_gravity="right|bottom"
+        android:layout_marginBottom="3dp"
+        />
+    </FrameLayout>
+</LinearLayout>

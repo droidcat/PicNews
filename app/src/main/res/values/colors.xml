@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="refresh_view_grey">#ffdcdcdc</color>
+
+    <color name="holo_purple">#ffaa66cc</color>
+    <!-- A light Holo shade of orange -->
+    <color name="holo_orange_light">#ffffbb33</color>
+    <!-- A dark Holo shade of orange -->
+    <color name="holo_orange_dark">#ffff8800</color>
+    <!-- A really bright Holo shade of blue -->
+    <color name="holo_blue_bright">#ff00ddff</color>
+
+    <!-- default CYTextView‘s TextColor-->
+    <color name="default_text_color">#ffeeeeee</color>
+    <!-- 列表项标题颜色-->
+    <color name="list_item_title">#ff333333</color>
+</resources>
