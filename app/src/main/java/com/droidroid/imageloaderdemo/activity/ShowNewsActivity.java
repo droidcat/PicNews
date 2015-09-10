@@ -211,7 +211,7 @@ public class ShowNewsActivity extends BaseActivity implements View.OnClickListen
                 }
                 break;
             case R.id.to_right:
-                if (indexToShow != result.size()) {
+                if (indexToShow != result.size() - 1) {
                     viewPager.setCurrentItem(indexToShow + 1);
                 }
                 break;
