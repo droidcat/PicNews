@@ -32,7 +32,7 @@ public class CYTextView extends TextView {
         float textsize = typedArray.getDimension(
                 R.styleable.CYTextView_mytextSize, 20);
         int textcolor = typedArray.getColor(R.styleable.CYTextView_mytextColor,
-                getResources().getColor(R.color.default_text_color));
+                getResources().getColor(R.color.description_textview_color_pager));
         float linespace = typedArray.getDimension(
                 R.styleable.CYTextView_lineSpacingExtra, 6);
         int typeface = typedArray.getColor(R.styleable.CYTextView_typeface, 0);

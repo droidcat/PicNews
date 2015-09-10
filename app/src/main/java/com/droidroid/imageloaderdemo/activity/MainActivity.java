@@ -41,8 +41,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import me.biubiubiu.justifytext.library.JustifyTextView;
-
 public class MainActivity extends BaseActivity {
 
     // 显示图片的相关设置
@@ -78,7 +76,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ac_imgtxt_list);
+        setContentView(R.layout.ac_main_list);
 
         // 为该activity添加管理
         ActivityCollector.addActivity(this);
@@ -450,9 +448,9 @@ public class MainActivity extends BaseActivity {
             if (convertView == null) {
                 view = getLayoutInflater().inflate(R.layout.item_list_imgtxt, parent, false);
                 viewholder = new Viewholder();
-                viewholder.titleView = (CYTextView) view.findViewById(R.id.list_item_title);
-                viewholder.imageView = (ImageView) view.findViewById(R.id.list_item_image);
-                viewholder.timeTextView = (TextView) view.findViewById(R.id.list_item_updatetime);
+                viewholder.titleView = (CYTextView) view.findViewById(R.id.title_textview_list);
+                viewholder.imageView = (ImageView) view.findViewById(R.id.image_imageview_list);
+                viewholder.timeTextView = (TextView) view.findViewById(R.id.time_textview_list);
                 view.setTag(viewholder);
             } else {
                 viewholder = (Viewholder) view.getTag();

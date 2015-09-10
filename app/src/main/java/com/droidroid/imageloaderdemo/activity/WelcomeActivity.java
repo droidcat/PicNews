@@ -57,12 +57,12 @@ public class WelcomeActivity extends Activity {
         dbManager = DBManager.getInstance(WelcomeActivity.this);
 
         // 进度条
-        bar = (ProgressBar) findViewById(R.id.progress_bar);
+        bar = (ProgressBar) findViewById(R.id.progress_welcome);
         bar.setMax(100);
         bar.setProgress(0);
 
         // 状态显示
-        textView = (TextView) findViewById(R.id.progress_text);
+        textView = (TextView) findViewById(R.id.progress_state_welcome);
 
 
         // 如果网络可用并且是第一次使用app

@@ -74,7 +74,7 @@ public class ShowNewsActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ac_imgtxt_pager);
+        setContentView(R.layout.ac_shownews_pager);
         // 添加当前的activity进管理器中
         ActivityCollector.addActivity(this);
         // 配置图片显示
@@ -297,11 +297,11 @@ public class ShowNewsActivity extends BaseActivity implements View.OnClickListen
             // 页面布局
             View itemPager = inflater.inflate(R.layout.item_pager_imgtxt, viewGroup, false);
             // 显示当前索引
-            TextView currentIndex = (TextView) itemPager.findViewById(R.id.current_index);
+            TextView currentIndex = (TextView) itemPager.findViewById(R.id.index_textview_pager);
             // 存放图片
-            ImageView imageView = (ImageView) itemPager.findViewById(R.id.pager_iamge);
+            ImageView imageView = (ImageView) itemPager.findViewById(R.id.iamge_imageview_pager);
             // 存放新闻描述
-            CYTextView textView = (CYTextView) itemPager.findViewById(R.id.pager_text);
+            CYTextView textView = (CYTextView) itemPager.findViewById(R.id.description_textview_pager);
             // 进度条
             final ProgressBar spinner = (ProgressBar) itemPager.findViewById(R.id.loading);
 
