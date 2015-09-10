@@ -3,5 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="load">正在加载...</string>
+    <string name="welcome_title">图片新闻</string>
+    <string name="welcome_loading_state">正在加载...</string>
+    <string name="time_textview_textsize_list">10sp</string>
 </resources>
