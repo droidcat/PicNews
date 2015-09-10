@@ -90,14 +90,14 @@ public class WelcomeActivity extends Activity {
             if (result != null && result.size() > 0) {
 
                 Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-                // 注意News类需要实现Parcelable接口
+                // 注意ItemNews类需要实现Parcelable接口
                 intent.putParcelableArrayListExtra("news", result);
                 intent.putExtra("count", count);
                 startActivity(intent);
                 WelcomeActivity.this.finish();
 
             }
-            // 其余的情况
+            // 数据库也无数据时
             else {
                 if (NetworkUtil.isNetWorkAvailable(WelcomeActivity.this)) {
                     new Task().execute(Constants.FIRST_NEWS_ITEM_URL);
@@ -184,17 +184,22 @@ public class WelcomeActivity extends Activity {
 
         @Override
         protected ArrayList<ItemNews> doInBackground(String... params) {
+            // 索引为0的url
             String url0 = params[0];
-            String[] urls = new String[15];
-            String[] jsons = new String[15];
+
+            // 单条新闻的url
+            String urlSingle;
+
+            // 单条新闻的json
+            String jsonSingle;
             ItemNews newsItem;
             ArrayList<ItemNews> newsList = new ArrayList<>();
 
             int i = 0;
             while (i < 15) {
-                urls[i] = url0.substring(0, url0.length()) + (i + 1);
-                jsons[i] = NetworkUtil.sendRequest(urls[i]);
-                newsItem = NetworkUtil.convertJsonToNews(jsons[i]);
+                urlSingle = url0.substring(0, url0.length()) + (i + 1);
+                jsonSingle = NetworkUtil.sendRequest(urlSingle);
+                newsItem = NetworkUtil.convertJsonToNews(jsonSingle);
                 newsList.add(newsItem);
                 i++;
                 // 更新进度条
