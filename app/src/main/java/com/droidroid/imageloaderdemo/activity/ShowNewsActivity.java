@@ -25,7 +25,7 @@ import com.droidroid.imageloaderdemo.db.DBManager;
 import com.droidroid.imageloaderdemo.projection.slide.SlideSlide;
 import com.droidroid.imageloaderdemo.util.ActivityCollector;
 import com.droidroid.imageloaderdemo.util.NetworkUtil;
-import com.droidroid.imageloaderdemo.view.CYTextView;
+import com.nimos.widget.CYTextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;

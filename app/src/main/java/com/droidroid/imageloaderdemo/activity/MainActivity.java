@@ -22,7 +22,6 @@ import com.droidroid.imageloaderdemo.R;
 import com.droidroid.imageloaderdemo.projection.news.LinksNews;
 import com.droidroid.imageloaderdemo.projection.news.ItemNews;
 import com.droidroid.imageloaderdemo.util.NetworkUtil;
-import com.droidroid.imageloaderdemo.view.CYTextView;
 import com.droidroid.imageloaderdemo.view.RefreshLayout;
 import com.droidroid.imageloaderdemo.view.RefreshLvLayout;
 import com.droidroid.imageloaderdemo.util.ActivityCollector;
