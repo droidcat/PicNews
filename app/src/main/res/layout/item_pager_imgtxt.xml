@@ -33,7 +33,7 @@
                 android:layout_marginRight="@dimen/image_imageview_marginright_pager"
                 android:layout_marginTop="@dimen/image_imageview_margintop_pager" />
 
-            <com.droidroid.imageloaderdemo.view.CYTextView
+            <com.nimos.widget.CYTextView
                 xmlns:cy="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/description_textview_pager"
                 android:layout_width="match_parent"
