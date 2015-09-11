@@ -1,4 +1,4 @@
-package com.droidroid.imageloaderdemo.view;
+package com.nimos.widget;
 
 /**
  * Created by Droidroid on 2015/9/9.
