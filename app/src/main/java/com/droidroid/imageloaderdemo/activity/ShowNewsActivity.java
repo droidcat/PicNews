@@ -89,10 +89,10 @@ public class ShowNewsActivity extends BaseActivity implements View.OnClickListen
                 .build();
 
 
-        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager = (ViewPager) findViewById(R.id.pager_shownews);
         // 指示按钮
-        leftIndicator = (ImageView) findViewById(R.id.to_left);
-        rightIndicator = (ImageView) findViewById(R.id.to_right);
+        leftIndicator = (ImageView) findViewById(R.id.toleft_shownews);
+        rightIndicator = (ImageView) findViewById(R.id.toright_shownews);
         leftIndicator.setAlpha(mAlpha);
         rightIndicator.setAlpha(mAlpha);
         leftIndicator.setOnClickListener(this);
@@ -205,12 +205,12 @@ public class ShowNewsActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View v) {
         int indexToShow = viewPager.getCurrentItem();
         switch (v.getId()) {
-            case R.id.to_left:
+            case R.id.toleft_shownews:
                 if (indexToShow != 0) {
                     viewPager.setCurrentItem(indexToShow - 1);
                 }
                 break;
-            case R.id.to_right:
+            case R.id.toright_shownews:
                 if (indexToShow != result.size() - 1) {
                     viewPager.setCurrentItem(indexToShow + 1);
                 }

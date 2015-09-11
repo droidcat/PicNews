@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity {
                 .build();
 
         // 新闻列表
-        listView = (ListView) findViewById(R.id.list);
+        listView = (ListView) findViewById(R.id.list_main);
 
         // 实例化图片适配器
         adapter = new NewsAdapter();
