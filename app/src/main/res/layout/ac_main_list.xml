@@ -1,11 +1,13 @@
-<com.droidroid.imageloaderdemo.view.RefreshLvLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:handmark="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refresh_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <ListView
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    >
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
         android:id="@+id/list_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
 
-</com.droidroid.imageloaderdemo.view.RefreshLvLayout>
+</LinearLayout>
