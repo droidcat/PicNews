@@ -13,5 +13,5 @@
     <!-- default CYTextView‘s TextColor-->
     <color name="description_textview_color_pager">#ffeeeeee</color>
     <!-- 列表项标题颜色-->
-    <color name="list_item_title">#ff333333</color>
+    <color name="title_textview_color_list">#ff333333</color>
 </resources>
