@@ -25,6 +25,8 @@ import com.droidroid.imageloaderdemo.util.NetworkUtil;
 import com.droidroid.imageloaderdemo.view.RefreshLayout;
 import com.droidroid.imageloaderdemo.view.RefreshLvLayout;
 import com.droidroid.imageloaderdemo.util.ActivityCollector;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.assist.PauseOnScrollListener;
@@ -42,7 +44,7 @@ import java.util.List;
 
 import me.biubiubiu.justifytext.library.JustifyTextView;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRefreshListener2{
 
     // 显示图片的相关设置
     private DisplayImageOptions options;
@@ -65,11 +67,8 @@ public class MainActivity extends BaseActivity {
     // 数据库管理类
     private DBManager dbManager;
 
-    // 新闻列表
-    private ListView listView;
-
-    // 继承自SwipeRefreshLayout
-    private RefreshLvLayout refreshLvLayout;
+    // 可刷新的新闻列表
+    private PullToRefreshListView refreshableListView;
 
     // 适配器
     private NewsAdapter adapter;
@@ -79,7 +78,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ac_main_list);
 
-        // 为该activity添加管理
+        // 收集activity
         ActivityCollector.addActivity(this);
 
         // 实例化数据库管理类
@@ -95,9 +94,6 @@ public class MainActivity extends BaseActivity {
                 .displayer(new RoundedBitmapDisplayer(3))
                 .build();
 
-        // 新闻列表
-        listView = (ListView) findViewById(R.id.list_main);
-
         // 实例化图片适配器
         adapter = new NewsAdapter();
 
@@ -107,82 +103,39 @@ public class MainActivity extends BaseActivity {
         count = intent.getLongExtra("count", 1);
         Log.d("app使用次数", String.valueOf(count));
 
+
+
+        // 下拉刷新上拉加载
+        refreshableListView = (PullToRefreshListView) findViewById(R.id.list_main);
+        refreshableListView.setMode(PullToRefreshBase.Mode.BOTH);
+        refreshableListView.setOnRefreshListener(this);
+
+        refreshableListView.getLoadingLayoutProxy(true,false).setPullLabel(getString(R.string.pulldown_pull_label));
+        refreshableListView.getLoadingLayoutProxy(true,false).setRefreshingLabel(getString(R.string.pulldown_refreshing_label));
+        refreshableListView.getLoadingLayoutProxy(true,false).setReleaseLabel(getString(R.string.pulldown_release_label));
+
+        refreshableListView.getLoadingLayoutProxy(false,true).setPullLabel(getString(R.string.pullup_pull_label));
+        refreshableListView.getLoadingLayoutProxy(false,true).setRefreshingLabel(getString(R.string.pullup_refreshing_label));
+        refreshableListView.getLoadingLayoutProxy(false,true).setReleaseLabel(getString(R.string.pullup_release_label));
+
+
         // 若取得的数据不为空，则更新列表
         if (result != null && result.size() > 0) {
             adapter.setData(result);
-            listView.setAdapter(adapter);
+            refreshableListView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         } else {
             // 否则执行异步任务
             new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
         }
 
-        // 下拉刷新上拉加载布局
-        refreshLvLayout = (RefreshLvLayout) findViewById(R.id.refresh_layout);
-        refreshLvLayout.setColorSchemeColors(R.color.holo_purple, R.color.holo_orange_dark,
-                R.color.holo_blue_bright, R.color.holo_orange_light);
-
-        // 为下拉设置监听
-        refreshLvLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // 在UI线程中执行
-                refreshLvLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        // 希望更新
-                        wantToRefresh = true;
-
-                        // 网络有效且希望更新
-                        if (NetworkUtil.isNetWorkAvailable(MainActivity.this) && wantToRefresh) {
-
-                            //开启异步任务加载数据
-                            new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
-
-                        } else {
-
-                            Toast.makeText(MainActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
-                            refreshLvLayout.setRefreshing(false);
-                        }
-
-
-                    }
-                }, 1000);
-            }
-        });
-
-        // 为上拉设置监听
-        refreshLvLayout.setOnLoadListener(new RefreshLayout.OnLoadListener() {
-            @Override
-            public void onLoad() {
-                // UI线程中执行
-                refreshLvLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        // 希望加载
-                        wantToLoad = true;
-
-                        // 网络可用且希望加载
-                        if (NetworkUtil.isNetWorkAvailable(MainActivity.this) && wantToLoad) {
-
-                            // 开启异步任务加载数据
-                            new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
-                        }
-
-                    }
-                }, 20);
-            }
-        });
-
         // 给下一个activity传递新闻详情的url
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        refreshableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ShowNewsActivity.class);
 
-                ArrayList<LinksNews> linksArrayList = result.get(position).getLinks();
+                ArrayList<LinksNews> linksArrayList = result.get((int)id).getLinks();
                 LinksNews links = linksArrayList.get(0);
                 intent.putExtra("url", links.getUrl());
                 startActivity(intent);
@@ -190,17 +143,17 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-//    @Override
-//    public void onBackPressed() {
-//
-//        long currentTime = System.currentTimeMillis();
-//        if (currentTime - waitTime > 3000) {
-//            Toast.makeText(MainActivity.this, "再点一次退出", Toast.LENGTH_SHORT).show();
-//            waitTime = currentTime;
-//        } else {
-//            ActivityCollector.finishAll();
-//        }
-//    }
+/*    @Override
+    public void onBackPressed() {
+
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - waitTime > 3000) {
+            Toast.makeText(MainActivity.this, "再点一次退出", Toast.LENGTH_SHORT).show();
+            waitTime = currentTime;
+        } else {
+            ActivityCollector.finishAll();
+        }
+    }*/
 
     /**
      * 退出程序处理
@@ -209,7 +162,7 @@ public class MainActivity extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
             if ((System.currentTimeMillis() - waitTime) > 2500) {
-                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.double_click_to_exit, Toast.LENGTH_SHORT).show();
                 waitTime = System.currentTimeMillis();
             } else {
                 ActivityCollector.finishAll();
@@ -217,6 +170,60 @@ public class MainActivity extends BaseActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+
+
+    @Override
+    public void onPullDownToRefresh(PullToRefreshBase refreshView) {
+        // 在UI线程中执行
+        refreshableListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                // 希望更新
+                wantToRefresh = true;
+
+                // 网络有效且希望更新
+                if (NetworkUtil.isNetWorkAvailable(MainActivity.this) && wantToRefresh) {
+
+                    //开启异步任务加载数据
+                    new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
+
+                } else {
+
+                    Toast.makeText(MainActivity.this, R.string.network_not_connected, Toast.LENGTH_SHORT).show();
+                    refreshableListView.onRefreshComplete();
+
+                }
+
+
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void onPullUpToRefresh(PullToRefreshBase refreshView) {
+        // UI线程中执行
+        refreshableListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                // 希望加载
+                wantToLoad = true;
+
+                // 网络可用且希望加载
+                if (NetworkUtil.isNetWorkAvailable(MainActivity.this) && wantToLoad) {
+
+                    // 开启异步任务加载数据
+                    new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
+                }else{
+                    Toast.makeText(MainActivity.this, R.string.network_not_connected, Toast.LENGTH_SHORT).show();
+                    refreshableListView.onRefreshComplete();
+                }
+
+            }
+        }, 1000);
     }
 
     /*
@@ -365,14 +372,15 @@ public class MainActivity extends BaseActivity {
                     result.addAll(0, maps);
                     adapter.setData(result);
                     adapter.notifyDataSetChanged();
-                    refreshLvLayout.setRefreshing(false);
+                    refreshableListView.onRefreshComplete();
+
                     Toast.makeText(MainActivity.this, "更新了" + maps.size() + "条新闻"
                             , Toast.LENGTH_SHORT).show();
 
                 } else {
                     // 停止刷新，提示数据已经是最新
-                    refreshLvLayout.setRefreshing(false);
-                    Toast.makeText(MainActivity.this, "已经是最新的", Toast.LENGTH_SHORT).show();
+                    refreshableListView.onRefreshComplete();
+                    Toast.makeText(MainActivity.this, R.string.is_newsest, Toast.LENGTH_SHORT).show();
                 }
                 wantToRefresh = false;
                 return;
@@ -386,14 +394,14 @@ public class MainActivity extends BaseActivity {
                     adapter.notifyDataSetChanged();
                 }
                 // 停止加载
-                refreshLvLayout.setLoading(false);
+                refreshableListView.onRefreshComplete();
                 wantToLoad = false;
                 return;
             }
             if (count == 1) {
                 result = maps;
                 adapter.setData(result);
-                listView.setAdapter(adapter);
+                refreshableListView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
             wantToLoad = false;
@@ -404,7 +412,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        listView.setOnScrollListener(new PauseOnScrollListener(imageLoader, true, true));
+        refreshableListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, true, true));
     }
 
     /**
@@ -429,12 +437,12 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return result.size();
+            return data.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return result.get(position);
+            return data.get(position);
         }
 
         @Override
@@ -487,4 +495,60 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+    /*refreshLvLayout.setColorSchemeColors(R.color.holo_purple, R.color.holo_orange_dark,
+                R.color.holo_blue_bright, R.color.holo_orange_light);
+
+        // 为下拉设置监听
+        refreshLvLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // 在UI线程中执行
+                refreshLvLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        // 希望更新
+                        wantToRefresh = true;
+
+                        // 网络有效且希望更新
+                        if (NetworkUtil.isNetWorkAvailable(MainActivity.this) && wantToRefresh) {
+
+                            //开启异步任务加载数据
+                            new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
+
+                        } else {
+
+                            Toast.makeText(MainActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
+                            refreshLvLayout.setRefreshing(false);
+                        }
+
+
+                    }
+                }, 1000);
+            }
+        });
+
+        // 为上拉设置监听
+        refreshLvLayout.setOnLoadListener(new RefreshLayout.OnLoadListener() {
+            @Override
+            public void onLoad() {
+                // UI线程中执行
+                refreshLvLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        // 希望加载
+                        wantToLoad = true;
+
+                        // 网络可用且希望加载
+                        if (NetworkUtil.isNetWorkAvailable(MainActivity.this) && wantToLoad) {
+
+                            // 开启异步任务加载数据
+                            new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
+                        }
+
+                    }
+                }, 20);
+            }
+        });*/
 }
