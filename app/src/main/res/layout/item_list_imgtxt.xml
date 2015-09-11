@@ -16,18 +16,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-    <com.droidroid.imageloaderdemo.view.CYTextView
+    <me.biubiubiu.justifytext.library.JustifyTextView
         android:id="@+id/title_textview_list"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left|top"
 
         android:layout_marginLeft="@dimen/title_textview_marginleft_list"
         android:layout_marginRight="@dimen/title_textview_marginright_list"
         android:layout_marginTop="@dimen/title_textview_margintop_list"
-        cy:mytextSize="@dimen/title_textview_textsize_list"
-        cy:lineSpacingExtra="@dimen/title_textview_linespace_list"
-        cy:mytextColor="@color/list_item_title"/>
+        android:textSize="@dimen/title_textview_textsize_list"
+        android:textColor="@color/title_textview_color_list"/>
     <TextView
         android:id="@+id/time_textview_list"
         android:layout_width="wrap_content"
