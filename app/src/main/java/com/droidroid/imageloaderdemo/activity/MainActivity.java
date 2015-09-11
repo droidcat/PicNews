@@ -41,6 +41,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import me.biubiubiu.justifytext.library.JustifyTextView;
+
 public class MainActivity extends BaseActivity {
 
     // 显示图片的相关设置
@@ -418,7 +420,7 @@ public class MainActivity extends BaseActivity {
 
         private class Viewholder {
             ImageView imageView;
-            CYTextView titleView;
+            JustifyTextView titleView;
             TextView timeTextView;
         }
 
@@ -448,14 +450,14 @@ public class MainActivity extends BaseActivity {
             if (convertView == null) {
                 view = getLayoutInflater().inflate(R.layout.item_list_imgtxt, parent, false);
                 viewholder = new Viewholder();
-                viewholder.titleView = (CYTextView) view.findViewById(R.id.title_textview_list);
+                viewholder.titleView = (JustifyTextView) view.findViewById(R.id.title_textview_list);
                 viewholder.imageView = (ImageView) view.findViewById(R.id.image_imageview_list);
                 viewholder.timeTextView = (TextView) view.findViewById(R.id.time_textview_list);
                 view.setTag(viewholder);
             } else {
                 viewholder = (Viewholder) view.getTag();
             }
-            viewholder.titleView.SetText(data.get(position).getTitle());
+            viewholder.titleView.setText(data.get(position).getTitle()+"\n");
             viewholder.timeTextView.setText(data.get(position).getUpdateTime());
             /**
              * 参数1：图片url
