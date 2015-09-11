@@ -39,7 +39,7 @@ public class CYTextView extends TextView {
 
         typedArray.recycle();
 
-        // 设置 CY TextView的宽度和行间距www.linuxidc.com
+        // 设置 CY TextView的宽度和行间距
         LineSpace = linespace;
 
         // 构建paint对象
