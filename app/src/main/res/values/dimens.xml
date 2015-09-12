@@ -27,4 +27,6 @@
     <dimen name="description_textview_margintop_pager">10dp</dimen>
     <dimen name="description_textview_textsize_pager">13sp</dimen>
     <dimen name="time_textview_textsize_list">13sp</dimen>
+    <dimen name="progress_state_marginbottom_welcome">2dp</dimen>
+    <dimen name="state_text_marginbottom_welcome">2dp</dimen>
 </resources>
