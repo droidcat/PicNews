@@ -28,7 +28,7 @@ public class WelcomeActivity extends Activity {
 
 
     // 进度条
-    private ProgressBar bar;
+//    private ProgressBar bar;
 
     // 显示加载状态
     private TextView textView;
@@ -56,10 +56,10 @@ public class WelcomeActivity extends Activity {
         // 实例化数据库管理类
         dbManager = DBManager.getInstance(WelcomeActivity.this);
 
-        // 进度条
+       /* // 进度条
         bar = (ProgressBar) findViewById(R.id.progress_welcome);
         bar.setMax(100);
-        bar.setProgress(0);
+        bar.setProgress(0);*/
 
         // 状态显示
         textView = (TextView) findViewById(R.id.progress_state_welcome);
@@ -182,7 +182,7 @@ public class WelcomeActivity extends Activity {
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            bar.setProgress(values[0]);
+//            bar.setProgress(values[0]);
         }
 
         @Override
