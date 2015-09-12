@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.droidroid.imageloaderdemo"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -23,6 +23,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'me.biubiubiu.justifytext:library:1.1'
+    compile 'com.github.castorflex.smoothprogressbar:library-circular:1.1.0'
     compile files('libs/gson-2.3.1.jar')
     compile files('libs/universal-image-loader-1.8.6-with-sources.jar')
     compile project(':RefreshLibrary')
