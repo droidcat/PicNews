@@ -3,7 +3,6 @@ package com.droidroid.imageloaderdemo.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +20,6 @@ import com.droidroid.imageloaderdemo.R;
 import com.droidroid.imageloaderdemo.projection.news.LinksNews;
 import com.droidroid.imageloaderdemo.projection.news.ItemNews;
 import com.droidroid.imageloaderdemo.util.NetworkUtil;
-import com.droidroid.imageloaderdemo.view.RefreshLayout;
-import com.droidroid.imageloaderdemo.view.RefreshLvLayout;
 import com.droidroid.imageloaderdemo.util.ActivityCollector;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -44,7 +40,7 @@ import java.util.List;
 
 import me.biubiubiu.justifytext.library.JustifyTextView;
 
-public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRefreshListener2{
+public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRefreshListener2 {
 
     // 显示图片的相关设置
     private DisplayImageOptions options;
@@ -57,6 +53,9 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
 
     // 加载标志
     private boolean wantToLoad = false;
+
+    // 网络状态错误标志
+    private boolean isError = false;
 
     // 用于双击退出程序的判断
     private long waitTime = 0;
@@ -104,19 +103,18 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
         Log.d("app使用次数", String.valueOf(count));
 
 
-
         // 下拉刷新上拉加载
         refreshableListView = (PullToRefreshListView) findViewById(R.id.list_main);
         refreshableListView.setMode(PullToRefreshBase.Mode.BOTH);
         refreshableListView.setOnRefreshListener(this);
 
-        refreshableListView.getLoadingLayoutProxy(true,false).setPullLabel(getString(R.string.pulldown_pull_label));
-        refreshableListView.getLoadingLayoutProxy(true,false).setRefreshingLabel(getString(R.string.pulldown_refreshing_label));
-        refreshableListView.getLoadingLayoutProxy(true,false).setReleaseLabel(getString(R.string.pulldown_release_label));
+        refreshableListView.getLoadingLayoutProxy(true, false).setPullLabel(getString(R.string.pulldown_pull_label));
+        refreshableListView.getLoadingLayoutProxy(true, false).setRefreshingLabel(getString(R.string.pulldown_refreshing_label));
+        refreshableListView.getLoadingLayoutProxy(true, false).setReleaseLabel(getString(R.string.pulldown_release_label));
 
-        refreshableListView.getLoadingLayoutProxy(false,true).setPullLabel(getString(R.string.pullup_pull_label));
-        refreshableListView.getLoadingLayoutProxy(false,true).setRefreshingLabel(getString(R.string.pullup_refreshing_label));
-        refreshableListView.getLoadingLayoutProxy(false,true).setReleaseLabel(getString(R.string.pullup_release_label));
+        refreshableListView.getLoadingLayoutProxy(false, true).setPullLabel(getString(R.string.pullup_pull_label));
+        refreshableListView.getLoadingLayoutProxy(false, true).setRefreshingLabel(getString(R.string.pullup_refreshing_label));
+        refreshableListView.getLoadingLayoutProxy(false, true).setReleaseLabel(getString(R.string.pullup_release_label));
 
 
         // 若取得的数据不为空，则更新列表
@@ -126,7 +124,7 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
             adapter.notifyDataSetChanged();
         } else {
             // 否则执行异步任务
-            new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
+            new NetTask().execute(Constants.SINGLE_NEWS_URL);
         }
 
         // 给下一个activity传递新闻详情的url
@@ -135,7 +133,7 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ShowNewsActivity.class);
 
-                ArrayList<LinksNews> linksArrayList = result.get((int)id).getLinks();
+                ArrayList<LinksNews> linksArrayList = result.get((int) id).getLinks();
                 LinksNews links = linksArrayList.get(0);
                 intent.putExtra("url", links.getUrl());
                 startActivity(intent);
@@ -173,7 +171,6 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
     }
 
 
-
     @Override
     public void onPullDownToRefresh(PullToRefreshBase refreshView) {
         // 在UI线程中执行
@@ -188,7 +185,7 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
                 if (NetworkUtil.isNetWorkAvailable(MainActivity.this) && wantToRefresh) {
 
                     //开启异步任务加载数据
-                    new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
+                    new NetTask().execute(Constants.SINGLE_NEWS_URL);
 
                 } else {
 
@@ -216,8 +213,8 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
                 if (NetworkUtil.isNetWorkAvailable(MainActivity.this) && wantToLoad) {
 
                     // 开启异步任务加载数据
-                    new NetTask().execute(Constants.FIRST_NEWS_ITEM_URL);
-                }else{
+                    new NetTask().execute(Constants.SINGLE_NEWS_URL);
+                } else {
                     Toast.makeText(MainActivity.this, R.string.network_not_connected, Toast.LENGTH_SHORT).show();
                     refreshableListView.onRefreshComplete();
                 }
@@ -269,16 +266,22 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
                 while (true) {
                     urlSingle = url0.substring(0, url0.length()) + (i + 1);
                     jsonSingle = NetworkUtil.sendRequest(urlSingle);
-                    newsItem = NetworkUtil.convertJsonToNews(jsonSingle);
-                    updateTime = newsItem.getUpdateTime();
+                    if (null != jsonSingle) {
+                        isError = false;
+                        newsItem = NetworkUtil.convertJsonToSingleNews(jsonSingle);
+                        updateTime = newsItem.getUpdateTime();
 
-                    Date updateDate = format.parse(updateTime, new ParsePosition(0));
-                    // 只需最新数据
-                    if (updateDate.before(date) || updateDate.equals(date)) {
+                        Date updateDate = format.parse(updateTime, new ParsePosition(0));
+                        // 只需最新数据
+                        if (updateDate.before(date) || updateDate.equals(date)) {
+                            break;
+                        }
+                        refreshedList.add(newsItem);
+                        i++;
+                    } else {
+                        isError = true;
                         break;
                     }
-                    refreshedList.add(newsItem);
-                    i++;
                 }
 
                 if (refreshedList != null && refreshedList.size() > 0) {
@@ -314,19 +317,25 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
                 ArrayList<ItemNews> lodedList = new ArrayList<>();
 
                 while (lodedList.size() < 5) {
-
                     urlSingle = url0.substring(0, url0.length()) + (lastIndex + 2);
                     jsonSingle = NetworkUtil.sendRequest(urlSingle);
-                    newsItem = NetworkUtil.convertJsonToNews(jsonSingle);
-                    String lastTime = newsItem.getUpdateTime();
+                    if (null != jsonSingle) {
 
-                    Date lastDate = format.parse(lastTime, new ParsePosition(0));
-                    if (lastDate.after(date) || lastDate.equals(date)) {
+                        isError = false;
+                        newsItem = NetworkUtil.convertJsonToSingleNews(jsonSingle);
+                        String lastTime = newsItem.getUpdateTime();
+
+                        Date lastDate = format.parse(lastTime, new ParsePosition(0));
+                        if (lastDate.after(date) || lastDate.equals(date)) {
+                            lastIndex++;
+                            continue;
+                        }
+                        lodedList.add(newsItem);
                         lastIndex++;
-                        continue;
+                    } else {
+                        isError = true;
+                        break;
                     }
-                    lodedList.add(newsItem);
-                    lastIndex++;
                 }
                 return lodedList;
             }
@@ -345,9 +354,15 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
                 while (i < 15) {
                     urlSingle = url0.substring(0, url0.length()) + (i + 1);
                     jsonSingle = NetworkUtil.sendRequest(urlSingle);
-                    newsItem = NetworkUtil.convertJsonToNews(jsonSingle);
-                    newsList.add(newsItem);
-                    i++;
+                    if (null != jsonSingle) {
+                        isError = false;
+                        newsItem = NetworkUtil.convertJsonToSingleNews(jsonSingle);
+                        newsList.add(newsItem);
+                        i++;
+                    } else {
+                        isError = true;
+                        break;
+                    }
                 }
 
                 if (newsList != null && newsList.size() > 0) {
@@ -378,9 +393,15 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
                             , Toast.LENGTH_SHORT).show();
 
                 } else {
-                    // 停止刷新，提示数据已经是最新
-                    refreshableListView.onRefreshComplete();
-                    Toast.makeText(MainActivity.this, R.string.is_newsest, Toast.LENGTH_SHORT).show();
+                    if (isError) {
+                        refreshableListView.onRefreshComplete();
+                        Toast.makeText(MainActivity.this, R.string.can_not_access_internet, Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        // 停止刷新，提示数据已经是最新
+                        refreshableListView.onRefreshComplete();
+                        Toast.makeText(MainActivity.this, R.string.is_newsest, Toast.LENGTH_SHORT).show();
+                    }
                 }
                 wantToRefresh = false;
                 return;
@@ -392,6 +413,9 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
                     result.addAll(maps);
                     adapter.setData(result);
                     adapter.notifyDataSetChanged();
+                }
+                if (isError){
+                    Toast.makeText(MainActivity.this, R.string.can_not_access_internet, Toast.LENGTH_SHORT).show();
                 }
                 // 停止加载
                 refreshableListView.onRefreshComplete();
@@ -464,7 +488,7 @@ public class MainActivity extends BaseActivity implements PullToRefreshBase.OnRe
             } else {
                 viewholder = (Viewholder) view.getTag();
             }
-            viewholder.titleView.setText(data.get(position).getTitle()+"\n");
+            viewholder.titleView.setText(data.get(position).getTitle() + "\n");
             viewholder.timeTextView.setText(data.get(position).getUpdateTime());
             /**
              * 参数1：图片url
