@@ -233,7 +233,7 @@ public class ShowNewsActivity extends BaseActivity implements View.OnClickListen
                 viewPager.setAdapter(adapter);
                 viewPager.setCurrentItem(0);
                 adapter.notifyDataSetChanged();
-                dbManager.saveSlide(maps,url);
+                dbManager.saveSlide(maps, url);
             }
             // 否则，直接判断为网络无效
             else {
@@ -255,9 +255,13 @@ public class ShowNewsActivity extends BaseActivity implements View.OnClickListen
         protected ArrayList<SlideSlide> doInBackground(String... params) {
             // 获得json数据
             String jsonStr = NetworkUtil.sendRequest(params[0]);
-            // 解析获得的json数据
-            ArrayList<SlideSlide> result = NetworkUtil.convertJsonToSlides(jsonStr);
-            return result;
+            if (null != jsonStr) {
+                // 解析获得的json数据
+                ArrayList<SlideSlide> result = NetworkUtil.convertJsonToSlides(jsonStr);
+                return result;
+
+            }
+            return null;
         }
     }
 
