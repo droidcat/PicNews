@@ -19,4 +19,5 @@
 
     <string name="network_not_connected">网络无连接</string>
     <string name="is_newsest">已经是最新的</string>
+    <string name="can_not_access_internet">无法接入互联网</string>
 </resources>
