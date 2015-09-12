@@ -64,11 +64,10 @@ public class WelcomeActivity extends Activity {
         // 状态显示
         textView = (TextView) findViewById(R.id.progress_state_welcome);
 
-
         // 如果网络可用并且是第一次使用app
         if (NetworkUtil.isNetWorkAvailable(WelcomeActivity.this) && isFirstOpen()) {
             // 开启异步任务利用网络加载数据
-            new Task().execute(Constants.FIRST_NEWS_ITEM_URL);
+            new Task().execute(Constants.FIFTEEN_NEWSES_URL);
         }
         // 如果网络不可用并且是第一次使用app
         else if (!NetworkUtil.isNetWorkAvailable(WelcomeActivity.this) && isFirstOpen()) {
@@ -100,7 +99,7 @@ public class WelcomeActivity extends Activity {
             // 数据库也无数据时
             else {
                 if (NetworkUtil.isNetWorkAvailable(WelcomeActivity.this)) {
-                    new Task().execute(Constants.FIRST_NEWS_ITEM_URL);
+                    new Task().execute(Constants.FIFTEEN_NEWSES_URL);
                 } else {
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -121,6 +120,10 @@ public class WelcomeActivity extends Activity {
         editor.putLong("count", 0);
         editor.commit();
     }
+
+//    private void isNotRefreshOfDay(){
+//        editor.
+//    }
 
     // 显示错误对话框
     private void showErrorDialog(Context context) {
@@ -184,31 +187,30 @@ public class WelcomeActivity extends Activity {
 
         @Override
         protected ArrayList<ItemNews> doInBackground(String... params) {
-            // 索引为0的url
-            String url0 = params[0];
+            // 大小为15的新闻url
+            String urlFif = params[0];
 
-            // 单条新闻的url
-            String urlSingle;
+//            // 单条新闻的url
+//            String urlSingle;
 
-            // 单条新闻的json
-            String jsonSingle;
+            // 15条新闻的json
+            String jsonFif;
             ItemNews newsItem;
-            ArrayList<ItemNews> newsList = new ArrayList<>();
+            ArrayList<ItemNews> newsList;
 
-            int i = 0;
-            while (i < 15) {
-                urlSingle = url0.substring(0, url0.length()) + (i + 1);
-                jsonSingle = NetworkUtil.sendRequest(urlSingle);
-                newsItem = NetworkUtil.convertJsonToNews(jsonSingle);
-                newsList.add(newsItem);
-                i++;
-                // 更新进度条
-                progress += 7;
-                publishProgress(progress);
+//                urlSingle = url0.substring(0, url0.length()) + (i + 1);
+            jsonFif = NetworkUtil.sendRequest(urlFif);
+            if (null != jsonFif) {
+                newsList = NetworkUtil.convertJsonToNewses(jsonFif);
+                return newsList;
             }
 
+            /*// 更新进度条
+            progress += 7;
+            publishProgress(progress);*/
 
-            return newsList;
+
+            return null;
         }
     }
 }
